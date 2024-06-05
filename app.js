@@ -28,28 +28,45 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderUsersByCategory(groupedUsers) {
         Object.keys(groupedUsers).forEach(category => {
             const categoryBox = document.createElement('div');
-            categoryBox.className = 'category-box';
+            categoryBox.className = 'box';
             categoryBox.innerHTML = `
-                <div class="category box">${category}</div>
+                <div class="category">${category}</div>
                 <div class="details hidden">
                     ${groupedUsers[category].map(user => `
                         <div class="user-detail">
-                            <p>Username: ${user.username}</p>
-                            <p>Date: ${user.date}</p>
-                            <p>Time: ${user.time}</p>
-                            <p>Payee: ${user.payee}</p>
-                            <p>Amount: ${user.amount}</p>
-                            <p>Moneyflow: ${user.moneyflow}</p>
-                            <p>Category: ${user.category}</p>
+                            <p><strong>Username:</strong> ${user.userName}</p>
+                            <p><strong>Date:</strong> ${user.date}</p>
+                            <p><strong>Time:</strong> ${user.time}</p>
+                            <p><strong>Payee:</strong> ${user.payee}</p>
+                            <p><strong>Amount:</strong> ${user.amount}</p>
+                            <p><strong>Moneyflow:</strong> ${user.moneyFlow}</p>
+                            <p><strong>Category:</strong> ${user.category}</p>
                         </div>
                     `).join('')}
                 </div>
             `;
 
-            // Add click event listener to toggle box expansion
+            // Add click event listener to toggle box expansion and hiding other boxes
             categoryBox.addEventListener('click', () => {
-                categoryBox.classList.toggle('expanded');
-                categoryBox.querySelector('.details').classList.toggle('hidden');
+                const currentlyExpanded = document.querySelector('.box.expanded');
+                const otherBoxes = document.querySelectorAll('.box');
+                if (currentlyExpanded && currentlyExpanded !== categoryBox) {
+                    currentlyExpanded.classList.remove('expanded');
+                    currentlyExpanded.querySelector('.details').classList.add('hidden');
+                    otherBoxes.forEach(box => box.classList.remove('hidden'));
+                } else if (!categoryBox.classList.contains('expanded')) {
+                    otherBoxes.forEach(box => {
+                        if (box !== categoryBox) {
+                            box.classList.add('hidden');
+                        }
+                    });
+                    categoryBox.classList.add('expanded');
+                    categoryBox.querySelector('.details').classList.remove('hidden');
+                } else {
+                    categoryBox.classList.remove('expanded');
+                    categoryBox.querySelector('.details').classList.add('hidden');
+                    otherBoxes.forEach(box => box.classList.remove('hidden'));
+                }
             });
 
             app.appendChild(categoryBox);
